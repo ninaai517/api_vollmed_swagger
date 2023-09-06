@@ -1,0 +1,151 @@
+openapi: 3.0.1
+info:
+  title: API de formulário de cadastro
+  description: API para cadastrar pacientes e médicos da clínica VollMed
+  version: 0.0.1
+  termsOfService: https://mockapi.io
+  contact:
+    name: Suporte Devs
+    email: suporte@vollmed.com
+    url: https://mockapi.io
+  license:
+    name: "Licença: GLPv3"
+    url: https://www.gnu.org/licenses/quick-guide-gplv3.pt-br.html
+externalDocs:
+  description: Documentação do CRUD da API VollMed.
+  url: https://mockapi.io
+servers:
+  - url: https://632a01cf4c626ff832cfa90b.mockapi.io
+    description: API de testes
+paths:
+  /paciente:
+    get:
+      summary: Recupera os dados cadastrais do paciente
+      responses:
+        200:
+          $ref: "#/components/responses/200"      
+    post:
+      summary: Cria novo cadastro de paciente
+      requestBody:
+        description: "Novo cadastro"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Altera Paciente"
+      responses:
+        201:
+          description: "Sucesso"
+          $ref: "#/components/responses/201"
+  /paciente/{id}:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+    get:
+      summary: Recupera os dados cadastrais de paciente pelo ID
+      responses:
+        200:
+          $ref: "#/components/responses/200"
+        404:
+          $ref: "#/components/responses/404" 
+    put:
+      summary: Atualiza um cadastro de paciente por id
+      requestBody:
+        description: "Novo cadastro"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              items:
+                $ref: "#/components/schemas/Altera Paciente"
+      responses:
+        201:
+          $ref: "#/components/responses/201"
+        404:
+          $ref: "#/components/responses/404" 
+    delete:
+      summary: Exclui um cadastro de paciente pelo ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  type: integer
+      responses:
+        204:
+          description: "Recurso excluído com sucesso"
+        404:
+          $ref: "#/components/responses/404" 
+security:
+  - auth: []
+
+components:
+  schemas:
+    Paciente:
+      type: object
+      properties:
+          id:
+            type: integer
+          nome:
+            type: string
+          telefone:
+            type: string
+          email:
+            type: string
+          cpf:
+            type: string
+          endereco:
+            type: object
+    Altera Paciente:
+      type: object
+      description: "Dados que podem ser atualizados do paciente pelo ID"
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        telefone:
+          type: string
+        email:
+          type: string
+        cpf:
+          type: string
+    #Schema de Array Paciente
+    Pacientes:
+      type: array
+      items:
+        $ref: "#/components/schemas/Paciente"
+  responses:
+    200:
+      description: "Sucesso"
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Paciente"
+    201:
+        description: "Sucesso"    
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Altera Paciente"
+    404:
+      description: "Não encontrado"
+      content:
+        application/json:
+          example: "ID not found!"
+  securitySchemes:
+    auth:
+      type: http
+      scheme: bearer #token tipo "portador"
+      bearerFormat: JWT
