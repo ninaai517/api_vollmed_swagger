@@ -20,7 +20,7 @@ servers:
 paths:
   /paciente:
     get:
-      summary: Recupera os dados cadastrais do paciente
+      summary: Recupera os dados cadastrais dos pacientes
       responses:
         200:
           $ref: "#/components/responses/200"      
@@ -60,9 +60,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              items:
-                $ref: "#/components/schemas/Altera Paciente"
+              $ref: "#/components/schemas/AlteraPaciente"
       responses:
         201:
           $ref: "#/components/responses/201"
@@ -70,6 +68,67 @@ paths:
           $ref: "#/components/responses/404" 
     delete:
       summary: Exclui um cadastro de paciente pelo ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  type: integer
+      responses:
+        204:
+          description: "Recurso excluído com sucesso"
+        404:
+          $ref: "#/components/responses/404" 
+  /medico:
+    get: 
+      summary: Recupera os dados cadastrais dos médicos
+      responses:
+        200:  
+          $ref: "#/components/responses/200"
+    post: 
+      requestBody:
+        description: "Novo cadastro de médico"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/AlteraPaciente"
+      responses:
+        201:
+          $ref: "#/components/responses/201"
+  /medico/{id}:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+    get:
+      summary: Recupera os dados cadastrais de médico pelo ID
+      responses:
+        200:
+          $ref: "#/components/responses/200"
+        404:
+          $ref: "#/components/responses/404" 
+    put:
+      description: Atualiza um cadastro de médico por id
+      requestBody:
+        description: "Atualização de cadastro"
+        required: true
+        content:
+          application/json:
+            schema:
+             $ref: "#/components/schemas/AlteraMedico"
+      responses:
+        201:
+          $ref: "#/components/responses/201"
+        404:
+          $ref: "#/components/responses/404" 
+    delete:
+      summary: Exclui um cadastro de médico pelo ID.
       requestBody:
         required: true
         content:
@@ -103,7 +162,7 @@ components:
             type: string
           endereco:
             type: object
-    Altera Paciente:
+    AlteraPaciente:
       type: object
       description: "Dados que podem ser atualizados do paciente pelo ID"
       properties:
@@ -118,10 +177,48 @@ components:
         cpf:
           type: string
     #Schema de Array Paciente
+    
+    Medico:
+      type: object
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        crm:
+          type: string
+        especialidade:
+          type: string
+        endereco:
+          type: object
+        telefone: 
+          type: string
+        email: 
+          type: string
+    AlteraMedico:
+      type: object
+      description: "Dados que podem ser atualizados do médico pelo ID"
+      properties:
+        id:
+          type: integer
+        nome:
+          type: string
+        crm:
+          type: string
+        especialidade:
+          type: string
+        telefone: 
+          type: string
+        email: 
+          type: string
     Pacientes:
       type: array
       items:
         $ref: "#/components/schemas/Paciente"
+    Medicos:
+      type:  array
+      items:
+        $ref: "#/components/schemas/Medico"
   responses:
     200:
       description: "Sucesso"
@@ -129,16 +226,19 @@ components:
         application/json:
           schema:
             type: array
-            items:
-              $ref: "#/components/schemas/Paciente"
+            oneOf:
+              - $ref: "#/components/schemas/Paciente"
+              - $ref: "#/components/schemas/Medico"
     201:
         description: "Sucesso"    
         content:
           application/json:
             schema:
               type: array
-              items:
-                $ref: "#/components/schemas/Altera Paciente"
+              oneOf:
+               - $ref: "#/components/schemas/AlteraPaciente"
+               - $ref: "#/components/schemas/AlteraMedico"
+
     404:
       description: "Não encontrado"
       content:
